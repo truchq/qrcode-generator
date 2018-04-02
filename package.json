@@ -2,6 +2,7 @@
   "name": "qrcode-tool",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://infinityblockchainlabs.github.io/ibl-qrcode-generator/",
   "dependencies": {
     "gh-pages": "^1.1.0",
     "qrcode.react": "^0.8.0",
