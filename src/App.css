@@ -1,25 +1,11 @@
-.App {
-  text-align: center;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 80px;
-}
-
-.App-header {
-  background-color: #222;
-  height: 150px;
-  padding: 20px;
-  color: white;
-}
-
-.App-title {
-  font-size: 1.5em;
-}
-
-.App-intro {
-  font-size: large;
+#particles-js {
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  background: linear-gradient(#48c6ef, #6f86d6)
 }
 
 @keyframes App-logo-spin {
@@ -27,33 +13,56 @@
   to { transform: rotate(360deg); }
 }
 
+.main-header {
+  position: relative
+}
+
 .main-container {
   width: 100%;
   height: 100%;
   display: flex;
-  flex-direction: row
+  flex-direction: row;
+  justify-content: center;
+  padding-top: 100px;
+  padding-left: 40px;
+  padding-right: 40px;
+  z-index: 10;
+  position: relative
 }
 
 .left-container {
   flex: 1;
-  height: 200px;
-  margin: 10px;
-  margin-right: 0px;
-  display: flex;
+  height: 100%;
+  margin: 0px;
   align-items: center;
   justify-content: center;
   flex-direction: column;
+  margin: 10px;
+  margin-right: 0px;
 }
 
 .right-container {
-  margin: 10px;
-  width: 200px;
-  height: 200px;
-  display: flex;
+  margin: 0px;
+  width: 250px;
+  height: 100%;
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  background-color: #ffffff !important
+  margin: 10px;
+}
+
+.qrcode-container {
+  width: 100%;
+  height: 100%;
+  text-align: center
+}
+
+.qrcode {
+  margin: 10px auto;
+}
+
+.card-content {
+  min-height: 320px
 }
 
 /*==================================================

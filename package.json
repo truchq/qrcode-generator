@@ -5,12 +5,14 @@
   "homepage": "https://infinityblockchainlabs.github.io/ibl-qrcode-generator/",
   "dependencies": {
     "gh-pages": "^1.1.0",
+    "material-ui": "^1.0.0-beta.41",
+    "material-ui-icons": "^1.0.0-beta.36",
+    "particles.js": "^2.0.0",
+    "qr.js": "0.0.0",
     "qrcode.react": "^0.8.0",
     "react": "^16.3.0",
     "react-dom": "^16.3.0",
-    "react-fontawesome": "^1.6.1",
-    "react-scripts": "1.1.1",
-    "react-uwp": "^1.1.8"
+    "react-scripts": "1.1.1"
   },
   "scripts": {
     "start": "react-scripts start",

@@ -1,10 +1,20 @@
 import * as React from 'react'
-import NavigationView from 'react-uwp/NavigationView'
-import SplitViewCommand from 'react-uwp/SplitViewCommand'
-import TextBox from 'react-uwp/TextBox'
+
+import BottomNavigation, { BottomNavigationAction } from 'material-ui/BottomNavigation'
+import Card, { CardActions, CardContent } from 'material-ui/Card'
+import Tooltip from 'material-ui/Tooltip'
+import IconButton from 'material-ui/IconButton'
+import ContentCopyIcon from 'material-ui-icons/ContentCopy'
+import TextField from 'material-ui/TextField'
+import SmsIcon from 'material-ui-icons/Sms'
+import PhotoIcon from 'material-ui-icons/Photo'
+import DashboardIcon from 'material-ui-icons/Dashboard'
+import PhoneAndroidIcon from 'material-ui-icons/PhoneAndroid'
+import Snackbar from 'material-ui/Snackbar'
+import CloseIcon from 'material-ui-icons/Close'
 // import Button from 'react-uwp/Button'
-const FontAwesome = require('react-fontawesome')
 const QRCode = require('qrcode.react')
+const QRImage = require('../utils/QrImage')
 
 export default class MainPage extends React.Component {
   constructor (props) {
@@ -13,17 +23,70 @@ export default class MainPage extends React.Component {
       phone: '',
       text: '',
       qrValue: '',
-      mode: 'text'
+      mode: 'text',
+      showLogo: false,
+      notification: false
     }
 
+    this.handleNotification = this.handleNotification.bind(this)
     this.handleChangePhone = this.handleChangePhone.bind(this)
     this.handleChangeText = this.handleChangeText.bind(this)
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
     this.handleMode = this.handleMode.bind(this)
+    this.showLogo = this.showLogo.bind(this)
+    this.copy = this.copy.bind(this)
   }
 
-  handleMode (mode) {
+  handleNotification (event, reason) {
+    const { notification } = this.state
+    if (reason === 'clickaway') {
+      return
+    }
+    notification.show = !notification.show
+    this.setState({ notification })
+  }
+
+  showLogo () {
+    const { showLogo, qrValue } = this.state
+    if (qrValue < 15) {
+      return this.setState({
+        notification: {
+          show: true,
+          message: 'Logo mode require more than 15 character !'
+        }
+      })
+    }
+    this.setState({
+      showLogo: !showLogo,
+      notification: {
+        show: true,
+        message: showLogo ? 'Changed to normal mode !' : 'Changed to logo mode !'
+      }
+    })
+  }
+
+  copy () {
+    const qr = document.getElementById('qrcode')
+    this.copyToClipboard(qr.toDataURL())
+    this.setState({
+      notification: {
+        show: true,
+        message: 'Copied qr code image to your clipboard !'
+      }
+    })
+  }
+
+  copyToClipboard (text) {
+    const dummy = document.createElement('input')
+    document.body.appendChild(dummy)
+    dummy.setAttribute('value', text)
+    dummy.select()
+    document.execCommand('copy')
+    document.body.removeChild(dummy)
+  }
+
+  handleMode (event, mode) {
     this.setState({mode, text: ''})
   }
 
@@ -57,83 +120,116 @@ export default class MainPage extends React.Component {
   }
 
   render () {
-    const { text, phone, mode, qrValue } = this.state
-    const { theme } = this.props
-    const baseStyle = {
-      margin: 0
-    }
-    const navigationTopNodes = [
-      <SplitViewCommand label='Text' icon={'\uE716'} onClick={() => this.handleMode('mode')} />,
-      <SplitViewCommand label='Message' icon='MessageLegacy' onClick={() => this.handleMode('sms')} />
-    ]
-
-    const navigationBottomNode = [
-      // <SplitViewCommand label='Settings' icon={'\uE713'} />,
-      // <SplitViewCommand label='CalendarDay' icon={'\uE161'} />
-    ]
-    const itemStyle = {
-      color: theme.baseHigh
-    }
+    const { text, phone, mode, qrValue, showLogo, notification } = this.state
 
     return (
-      <NavigationView
-        isControlled={false}
-        style={{ width: '100%', height: '100%', ...baseStyle }}
-        pageTitle=' QR-Code'
-        displayMode='compact'
-        autoResize={false}
-        initWidth={50}
-        expandedWidth={200}
-        defaultExpanded={false}
-        navigationTopNodes={navigationTopNodes}
-        navigationBottomNodes={navigationBottomNode}
-        focusNavigationNodeIndex={2}
-      >
-        <div className='main-container'>
-          <div className='left-container' style={{ ...itemStyle, background: theme.acrylicTexture40.background }}>
-            {mode === 'sms' && (
-              <TextBox
-                background='none'
-                value={phone}
-                onChange={this.handleChangePhone}
-                placeholder='Enter phone number'
-                style={{ height: 40, boxShadow: 'inset 0px 0px 0 2px #ffffff' }}
-                leftNode={
-                  <FontAwesome
-                    name='phone'
-                    size='2x'
-                    style={{ color: '#FFFFFF', textAlign: 'center', paddingTop: 6, width: 40, height: 40 }}
-                  />
-                }
-              />
-            )}
-            <TextBox
-              background='none'
-              value={text}
-              onChange={this.handleChangeText}
-              placeholder='Enter your text'
-              style={{ marginTop: 5, height: 40, boxShadow: 'inset 0px 0px 0 2px #ffffff' }}
-              leftNode={
-                <FontAwesome
-                  name='comment-alt'
-                  size='2x'
-                  style={{ color: '#FFFFFF', textAlign: 'center', paddingTop: 6, width: 40, height: 40 }}
+      <div className='main-container'>
+        <div className='left-container'>
+          <Card className='card-content' style={{ display: 'flex', flexDirection: 'column' }} >
+            <CardContent style={{ flex: 1 }} >
+              {mode === 'phone' && (
+                <TextField
+                  label='Enter your phone number'
+                  value={phone}
+                  onChange={this.handleChangePhone}
+                  style={{ width: '100%' }}
+                  margin='normal'
                 />
-              }
-            />
-            {/* <Button
-              style={{ margin: 5, height: 40, backgroundColor: '#FFFFFF' }}
-              icon='ReshareLegacy'
-              onClick={this.handleSubmit}
-            >
-              Convert
-            </Button> */}
-          </div>
-          <div className='right-container' style={{ ...itemStyle }}>
-            <QRCode value={qrValue} size={190} />
-          </div>
+              )}
+              <TextField
+                id='multiline-static'
+                label='Enter your text'
+                multiline
+                rowsMax='6'
+                rows='4'
+                value={text}
+                onChange={this.handleChangeText}
+                style={{ width: '100%' }}
+                margin='normal'
+              />
+            </CardContent>
+            <CardActions style={{ height: 80 }}>
+              <BottomNavigation value={mode} onChange={this.handleMode}>
+                <BottomNavigationAction label='Text' value='text' icon={<SmsIcon />} />
+                <BottomNavigationAction label='Phone' value='phone' icon={<PhoneAndroidIcon />} />
+              </BottomNavigation>
+            </CardActions>
+          </Card>
         </div>
-      </NavigationView>
+        <div className='right-container'>
+          <Card className='card-content'>
+            <div className='qrcode-container'>
+              {!showLogo ? (
+                <QRCode id='qrcode' className='qrcode' value={qrValue} size={230} />
+              ) : (
+                <QRImage
+                  id='qrcode'
+                  className='qrcode'
+                  value={qrValue}
+                  size={230}
+                  logoWidth={80}
+                  logoHeight={80}
+                  logo={'./images/logo.jpg'}
+                />
+              )}
+            </div>
+            <CardActions>
+              <Tooltip
+                enterDelay={100}
+                id='tooltip-controlled'
+                leaveDelay={400}
+                placement='top'
+                title='Copy Image to clipboard'
+              >
+                <IconButton aria-label='Share'>
+                  <ContentCopyIcon onClick={this.copy} />
+                </IconButton>
+              </Tooltip>
+              <Tooltip
+                enterDelay={100}
+                id='tooltip-controlled'
+                leaveDelay={400}
+                placement='top'
+                title='Add logo to qrcode. Only available with text more than 15 charater !'
+              >
+                <IconButton aria-label='Share'>
+                  {showLogo ? (
+                    <DashboardIcon onClick={this.showLogo} />
+                  ) : (
+                    <PhotoIcon onClick={this.showLogo} />
+                  )}
+                </IconButton>
+              </Tooltip>
+              {/* <Button size='small' color='primary'>
+                Learn More
+              </Button> */}
+            </CardActions>
+          </Card>
+        </div>
+        <Snackbar
+          anchorOrigin={{
+            vertical: 'bottom',
+            horizontal: 'left'
+          }}
+          open={notification.show}
+          autoHideDuration={6000}
+          onClose={this.handleNotification}
+          SnackbarContentProps={{
+            'aria-describedby': 'message-id'
+          }}
+          message={<span id='message-id'>{notification.message}</span>}
+          action={[
+            <IconButton
+              key='close'
+              aria-label='Close'
+              color='inherit'
+              onClick={this.handleNotification}
+            >
+              <CloseIcon />
+            </IconButton>
+          ]}
+        />
+      </div>
     )
   }
 }
