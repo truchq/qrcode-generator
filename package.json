@@ -21,5 +21,8 @@
     "eject": "react-scripts eject",
     "predeploy": "npm run build",
     "deploy": "gh-pages -b master -d build"
+  },
+  "resolutions": {
+    "material-ui/@babel/runtime": "7.0.0-beta.42"
   }
 }
